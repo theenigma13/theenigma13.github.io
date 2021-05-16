@@ -1,13 +1,23 @@
-tableau.extensions.initializeAsync().then(() => {
-    let dashboard = tableau.extensions.dashboardContent.dashboard;
-    let selectedWorksheet = dashboard.worksheets.find(w => w.name === 'Historical Trend');
-    let fieldName = 'Date';
-    updateFilterRange(selectedWorksheet, fieldName);
+
+(function () {
+  let unregisterHandlerFunctions = [];
+
+  $(document).ready(function () {
+    tableau.extensions.initializeAsync().then(function () {
+      let dashboard = tableau.extensions.dashboardContent.dashboard;
+      let fieldName = 'Delivery Date';
+      updateFilterRange(dashboard, fieldName);
+    }, function (err) {
+      // Something went wrong in initialization.
+      console.log('Error while Initializing: ' + err.toString());
+    });
   });
+
   
   function updateFilterRange(worksheet, fieldName) {
     let today = new Date();
     let lastYear = new Date();
     lastYear.setDate(today.getDay()-14);
-    worksheet.applyRangeFilterAsync(["Delivery Date"], { min: lastYear, max: today});
+    dashboard.applyRangeFilterAsync(fieldName, { min: lastYear, max: today});
   }
+})
